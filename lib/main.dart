@@ -1,3 +1,4 @@
+import 'package:drinking_water/bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Dringking today'),
     );
   }
 }
@@ -51,7 +52,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -69,42 +69,67 @@ class _MyHomePageState extends State<MyHomePage> {
     false,
     false
   ];
+
+  get mainPage {
+    return GridView.builder(
+        itemCount: 12,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, //1 개의 행에 보여줄 item 개수
+          mainAxisSpacing: 40,
+        ),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              drink[index] = true;
+              setState(() {});
+            },
+            child: Lottie.asset(
+              animate: drink[index],
+              repeat: false,
+              width: 100,
+              height: 150,
+              'assets/lottie/glass_water.json',
+            ),
+          );
+        });
+  }
+
+  get myPage {
+    return SafeArea(
+      child: Column(
+        children: [
+          ListTile(
+            title: Icon(
+              Icons.local_drink,
+              color: Colors.blue[500],
+            ),
+            leading: const Text(
+              '2022-07-21',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-              child: Container(
-                  padding: EdgeInsets.all(30),
-                  height: MediaQuery.of(context).size.height - 150,
-                  child: GridView.builder(
-                      itemCount: 12,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, //1 개의 행에 보여줄 item 개수
-                        mainAxisSpacing: 40,
-                      ),
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            drink[index] = true;
-                            setState(() {});
-                          },
-                          child: Lottie.asset(
-                            animate: drink[index],
-                            repeat: false,
-                            width: 100,
-                            height: 150,
-                            'assets/lottie/glass_water.json',
-                          ),
-                        );
-                      }))),
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          body: TabBarView(physics: NeverScrollableScrollPhysics(), children: [
+            Container(
+              margin: EdgeInsets.all(30),
+              child: mainPage,
+            ),
+            Container(
+              margin: EdgeInsets.all(30),
+              child: myPage,
+            ),
+          ]),
+          bottomNavigationBar: BottomBar(),
         ),
       ),
     );
